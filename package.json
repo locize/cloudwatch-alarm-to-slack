@@ -1,0 +1,26 @@
+{
+  "name": "cloudwatch-alarm-to-slack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "lint": "eslint .",
+    "updateAlarms": "node updateAlarms.js",
+    "build": "npm run lint && rm -rf build && packageName=$(npm pack) && tar -xvzf $packageName && mv package build && rm $packageName && cd build && npm i --production && rm -f package-lock.json && cd ..",
+    "cf_package": "npm run updateAlarms && npm run build && aws cloudformation package --template-file app-sam.json --s3-bucket $S3_BUCKET --output-template-file app-output_sam.yaml",
+    "cf_deploy": "aws cloudformation deploy --template-file app-output_sam.yaml --stack-name $npm_package_name --region eu-west-1 --capabilities CAPABILITY_IAM --parameter-override UnencryptedHookUrl=\"https://hooks.slack.com/services/whatever/whatever\" SlackChannel=\"#my-channel\" OrgName=\"localistars - inweso GmbH\"",
+    "deploy": "npm run cf_package && npm run cf_deploy",
+    "test": "npm run lint"
+  },
+  "dependencies": {
+    "aws-sdk": "2.437.0"
+  },
+  "devDependencies": {
+    "eslint": "5.16.0",
+    "eslint-config-standard": "12.0.0",
+    "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-node": "8.0.1",
+    "eslint-plugin-promise": "4.1.1",
+    "eslint-plugin-standard": "4.0.0"
+  }
+}

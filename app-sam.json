@@ -1,0 +1,131 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Parameters": {
+    "ExportName": {
+      "Type": "String",
+      "Default": "Function::CloudWatch-Alarm-To-Slack::Arn"
+    },
+    "UnencryptedHookUrl": {
+      "Type": "String",
+      "Default": ""
+    },
+    "KmsEncryptedHookUrl": {
+      "Type": "String",
+      "Default": ""
+    },
+    "SlackChannel": {
+      "Type": "String",
+      "Default": ""
+    },
+    "SlackUsername": {
+      "Type": "String",
+      "Default": "Slack-CloudWatch-Bot"
+    },
+    "EmojiIcon": {
+      "Type": "String",
+      "Default": ":robot_face:"
+    },
+    "OrgIcon": {
+      "Type": "String",
+      "Default": ""
+    },
+    "OrgName": {
+      "Type": "String",
+      "Default": ""
+    }
+  },
+  "Resources": {
+    "Topic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "DisplayName": {
+          "Fn::Sub": "${AWS::StackName}-topic"
+        }
+      }
+    },
+    "LambdaErrorAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": {
+          "Fn::Sub": "${AWS::StackName}-lambda-errors"
+        },
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "AlarmActions": [
+          {
+            "Ref": "Topic"
+          }
+        ]
+      }
+    },
+    "CloudWatchFunction": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AWS::StackName"
+        },
+        "Runtime": "nodejs8.10",
+        "Handler": "lambda.handler",
+        "Timeout": 60,
+        "MemorySize": 192,
+        "CodeUri": "build",
+        "Environment": {
+          "Variables": {
+            "UNENCRYPTED_HOOK_URL": {
+              "Fn::Sub": "${UnencryptedHookUrl}"
+            },
+            "KMS_ENCRYPTED_HOOK_URL": {
+              "Fn::Sub": "${KmsEncryptedHookUrl}"
+            },
+            "SLACK_CHANNEL": {
+              "Fn::Sub": "${SlackChannel}"
+            },
+            "SLACK_USERNAME": {
+              "Fn::Sub": "${SlackUsername}"
+            },
+            "EMOJI_ICON": {
+              "Fn::Sub": "${EmojiIcon}"
+            },
+            "ORG_ICON": {
+              "Fn::Sub": "${OrgIcon}"
+            },
+            "ORG_NAME": {
+              "Fn::Sub": "${OrgName}"
+            }
+          }
+        },
+        "Events": {
+          "NotificationTopic": {
+            "Type": "SNS",
+            "Properties": {
+              "Topic": {
+                "Ref": "Topic"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "FunctionArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "CloudWatchFunction",
+          "Arn"
+        ]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${ExportName}"
+        }
+      }
+    }
+  }
+}
