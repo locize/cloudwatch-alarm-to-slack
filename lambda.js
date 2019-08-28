@@ -7,6 +7,7 @@ var hookUrl
 function merge (target, source) {
   if (typeof target !== 'object' || typeof source !== 'object') return false
   for (var prop in source) {
+    // eslint-disable-next-line no-prototype-builtins
     if (!source.hasOwnProperty(prop)) continue
     if (prop in target) {
       if (typeof target[prop] !== 'object') {
@@ -35,8 +36,8 @@ var baseSlackMessage = {
   icon_emoji: config.icon_emoji,
   attachments: [
     {
-      'footer': config.orgName,
-      'footer_icon': config.orgIcon
+      footer: config.orgName,
+      footer_icon: config.orgIcon
     }
   ]
 }
@@ -111,12 +112,12 @@ var handleElasticBeanstalk = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        'fields': [
-          { 'title': 'Subject', 'value': event.Records[0].Sns.Subject, 'short': false },
-          { 'title': 'Message', 'value': message, 'short': false }
+        fields: [
+          { title: 'Subject', value: event.Records[0].Sns.Subject, short: false },
+          { title: 'Message', value: message, short: false }
         ],
-        'color': color,
-        'ts': timestamp
+        color: color,
+        ts: timestamp
       }
     ]
   }
@@ -140,28 +141,28 @@ var handleCodeDeploy = function (event, context) {
     } else if (message.status === 'FAILED') {
       color = 'danger'
     }
-    fields.push({ 'title': 'Message', 'value': snsSubject, 'short': false })
-    fields.push({ 'title': 'Deployment Group', 'value': message.deploymentGroupName, 'short': true })
-    fields.push({ 'title': 'Application', 'value': message.applicationName, 'short': true })
+    fields.push({ title: 'Message', value: snsSubject, short: false })
+    fields.push({ title: 'Deployment Group', value: message.deploymentGroupName, short: true })
+    fields.push({ title: 'Application', value: message.applicationName, short: true })
     fields.push({
-      'title': 'Status Link',
-      'value': 'https://console.aws.amazon.com/codedeploy/home?region=' + message.region + '#/deployments/' + message.deploymentId,
-      'short': false
+      title: 'Status Link',
+      value: 'https://console.aws.amazon.com/codedeploy/home?region=' + message.region + '#/deployments/' + message.deploymentId,
+      short: false
     })
   } catch (e) {
     color = 'good'
     message = event.Records[0].Sns.Message
-    fields.push({ 'title': 'Message', 'value': snsSubject, 'short': false })
-    fields.push({ 'title': 'Detail', 'value': message, 'short': false })
+    fields.push({ title: 'Message', value: snsSubject, short: false })
+    fields.push({ title: 'Detail', value: message, short: false })
   }
 
   var slackMessage = {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': fields,
-        'ts': timestamp
+        color: color,
+        fields: fields,
+        ts: timestamp
       }
     ]
   }
@@ -197,29 +198,29 @@ var handleCodePipeline = function (event, context) {
       color = 'danger'
     }
     header = message.detail.state + ': CodePipeline ' + changeType
-    fields.push({ 'title': 'Message', 'value': header, 'short': false })
-    fields.push({ 'title': 'Pipeline', 'value': message.detail.pipeline, 'short': true })
-    fields.push({ 'title': 'Region', 'value': message.region, 'short': true })
+    fields.push({ title: 'Message', value: header, short: false })
+    fields.push({ title: 'Pipeline', value: message.detail.pipeline, short: true })
+    fields.push({ title: 'Region', value: message.region, short: true })
     fields.push({
-      'title': 'Status Link',
-      'value': 'https://console.aws.amazon.com/codepipeline/home?region=' + message.region + '#/view/' + message.detail.pipeline,
-      'short': false
+      title: 'Status Link',
+      value: 'https://console.aws.amazon.com/codepipeline/home?region=' + message.region + '#/view/' + message.detail.pipeline,
+      short: false
     })
   } catch (e) {
     color = 'good'
     message = event.Records[0].Sns.Message
     header = message.detail.state + ': CodePipeline ' + message.detail.pipeline
-    fields.push({ 'title': 'Message', 'value': header, 'short': false })
-    fields.push({ 'title': 'Detail', 'value': message, 'short': false })
+    fields.push({ title: 'Message', value: header, short: false })
+    fields.push({ title: 'Detail', value: message, short: false })
   }
 
   var slackMessage = {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': fields,
-        'ts': timestamp
+        color: color,
+        fields: fields,
+        ts: timestamp
       }
     ]
   }
@@ -244,17 +245,17 @@ var handleElasticache = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': [
-          { 'title': 'Event', 'value': eventname.split(':')[1], 'short': true },
-          { 'title': 'Node', 'value': nodename, 'short': true },
+        color: color,
+        fields: [
+          { title: 'Event', value: eventname.split(':')[1], short: true },
+          { title: 'Node', value: nodename, short: true },
           {
-            'title': 'Link to cache node',
-            'value': 'https://console.aws.amazon.com/elasticache/home?region=' + region + '#cache-nodes:id=' + nodename + ';nodes',
-            'short': false
+            title: 'Link to cache node',
+            value: 'https://console.aws.amazon.com/elasticache/home?region=' + region + '#cache-nodes:id=' + nodename + ';nodes',
+            short: false
           }
         ],
-        'ts': timestamp
+        ts: timestamp
       }
     ]
   }
@@ -284,29 +285,29 @@ var handleCloudWatch = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': [
-          { 'title': 'Alarm Name', 'value': alarmName, 'short': true },
-          { 'title': 'Alarm Description', 'value': alarmReason, 'short': false },
+        color: color,
+        fields: [
+          { title: 'Alarm Name', value: alarmName, short: true },
+          { title: 'Alarm Description', value: alarmReason, short: false },
           {
-            'title': 'Trigger',
-            'value': trigger.Statistic + ' ' +
+            title: 'Trigger',
+            value: trigger.Statistic + ' ' +
               metricName + ' ' +
               trigger.ComparisonOperator + ' ' +
               trigger.Threshold + ' for ' +
               trigger.EvaluationPeriods + ' period(s) of ' +
               trigger.Period + ' seconds.',
-            'short': false
+            short: false
           },
-          { 'title': 'Old State', 'value': oldState, 'short': true },
-          { 'title': 'Current State', 'value': newState, 'short': true },
+          { title: 'Old State', value: oldState, short: true },
+          { title: 'Current State', value: newState, short: true },
           {
-            'title': 'Link to Alarm',
-            'value': 'https://console.aws.amazon.com/cloudwatch/home?region=' + region + '#alarm:alarmFilter=ANY;name=' + encodeURIComponent(alarmName),
-            'short': false
+            title: 'Link to Alarm',
+            value: 'https://console.aws.amazon.com/cloudwatch/home?region=' + region + '#alarm:alarmFilter=ANY;name=' + encodeURIComponent(alarmName),
+            short: false
           }
         ],
-        'ts': timestamp
+        ts: timestamp
       }
     ]
   }
@@ -323,15 +324,15 @@ var handleAutoScaling = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': [
-          { 'title': 'Message', 'value': event.Records[0].Sns.Subject, 'short': false },
-          { 'title': 'Description', 'value': message.Description, 'short': false },
-          { 'title': 'Event', 'value': message.Event, 'short': false },
-          { 'title': 'Cause', 'value': message.Cause, 'short': false }
+        color: color,
+        fields: [
+          { title: 'Message', value: event.Records[0].Sns.Subject, short: false },
+          { title: 'Description', value: message.Description, short: false },
+          { title: 'Event', value: message.Event, short: false },
+          { title: 'Cause', value: message.Cause, short: false }
 
         ],
-        'ts': timestamp
+        ts: timestamp
       }
     ]
   }
@@ -365,12 +366,12 @@ var handleCatchAll = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        'color': color,
-        'fields': [
-          { 'title': 'Message', 'value': record.Sns.Subject, 'short': false },
-          { 'title': 'Description', 'value': description, 'short': false }
+        color: color,
+        fields: [
+          { title: 'Message', value: record.Sns.Subject, short: false },
+          { title: 'Description', value: description, short: false }
         ],
-        'ts': timestamp
+        ts: timestamp
       }
     ]
   }
