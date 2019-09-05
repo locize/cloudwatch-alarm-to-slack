@@ -1,6 +1,7 @@
 const { exec } = require('child_process')
 const fs = require('fs')
 const path = require('path')
+const { createHash } = require('crypto')
 
 exec('aws logs describe-log-groups --region eu-west-1', { env: process.env }, (err, stdout, stderr) => {
   if (err) return console.error(err)
@@ -17,10 +18,13 @@ exec('aws logs describe-log-groups --region eu-west-1', { env: process.env }, (e
     const template = JSON.parse(JSON.stringify(appSam.Resources.LambdaErrorAlarm))
     delete appSam.Resources.LambdaErrorAlarm
 
-    desiredLogGroupNames.forEach((fn, i) => {
-      appSam.Resources[`LambdaErrorAlarm${i}`] = JSON.parse(JSON.stringify(template))
-      appSam.Resources[`LambdaErrorAlarm${i}`].Properties.AlarmName = `${fn}-lambda-errors`
-      appSam.Resources[`LambdaErrorAlarm${i}`].Properties.Dimensions = [{ Name: 'FunctionName', Value: fn }]
+    desiredLogGroupNames.forEach((fn) => {
+      const hasher = createHash('md5')
+      hasher.update(fn)
+      const n = hasher.digest('hex')
+      appSam.Resources[`LambdaErrorAlarm${n}`] = JSON.parse(JSON.stringify(template))
+      appSam.Resources[`LambdaErrorAlarm${n}`].Properties.AlarmName = `${fn}-lambda-errors`
+      appSam.Resources[`LambdaErrorAlarm${n}`].Properties.Dimensions = [{ Name: 'FunctionName', Value: fn }]
     })
   }
 
