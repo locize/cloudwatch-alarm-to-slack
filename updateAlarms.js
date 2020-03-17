@@ -7,7 +7,11 @@ exec('aws logs describe-log-groups --region eu-west-1', { env: process.env }, (e
   if (err) return console.error(err)
 
   const resultJSON = JSON.parse(stdout)
-  const desiredLogGroupNames = resultJSON.logGroups.filter((lg) => lg.logGroupName.indexOf(require('./package.json').name) < 0 && lg.logGroupName.indexOf('lambda') > -1).map((lg) => {
+  const desiredLogGroupNames = resultJSON.logGroups.filter((lg) => {
+    return lg.logGroupName.indexOf(require('./package.json').name) < 0 &&
+           lg.logGroupName.indexOf('lambda') > -1 &&
+           lg.logGroupName.indexOf('-api-authorizer') < 0
+  }).map((lg) => {
     const splitted = lg.logGroupName.split('/')
     return splitted[splitted.length - 1]
   })
