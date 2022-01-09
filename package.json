@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
+  "type": "module",
   "scripts": {
     "lint": "eslint .",
     "updateAlarms": "node updateAlarms.js",
@@ -13,14 +14,14 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "aws-sdk": "2.896.0"
+    "@aws-sdk/client-kms": "3.46.0"
   },
   "devDependencies": {
-    "eslint": "7.25.0",
-    "eslint-config-standard": "16.0.2",
-    "eslint-plugin-import": "2.22.1",
+    "eslint": "7.32.0",
+    "eslint-config-standard": "16.0.3",
+    "eslint-plugin-import": "2.25.4",
     "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-promise": "5.1.0",
+    "eslint-plugin-promise": "5.2.0",
     "eslint-plugin-standard": "5.0.0"
   }
 }

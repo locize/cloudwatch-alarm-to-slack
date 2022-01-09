@@ -1,7 +1,8 @@
-const AWS = require('aws-sdk')
-const url = require('url')
-const https = require('https')
-const config = require('./config')
+import { KMSClient, DecryptCommand } from '@aws-sdk/client-kms'
+import url from 'url'
+import https from 'https'
+import config from './config.js'
+
 let hookUrl
 
 function merge (target, source) {
@@ -428,7 +429,7 @@ const processEvent = function (event, context) {
   })
 }
 
-exports.handler = function (event, context) {
+export const handler = function (event, context) {
   if (hookUrl) {
     processEvent(event, context)
   } else if (config.unencryptedHookUrl) {
@@ -437,17 +438,17 @@ exports.handler = function (event, context) {
   } else if (config.kmsEncryptedHookUrl && config.kmsEncryptedHookUrl !== '<kmsEncryptedHookUrl>') {
     const encryptedBuf = Buffer.from(config.kmsEncryptedHookUrl, 'base64')
     const cipherText = { CiphertextBlob: encryptedBuf }
-    const kms = new AWS.KMS()
+    const kmsClient = new KMSClient()
 
-    kms.decrypt(cipherText, function (err, data) {
-      if (err) {
-        console.log('decrypt error: ' + err)
-        processEvent(event, context)
-      } else {
+    kmsClient.send(new DecryptCommand(cipherText))
+      .then((data) => {
         hookUrl = 'https://' + data.Plaintext.toString('ascii')
         processEvent(event, context)
-      }
-    })
+      })
+      .catch((err) => {
+        console.log('decrypt error: ' + err)
+        processEvent(event, context)
+      })
   } else {
     context.fail('hook url has not been set.')
   }
