@@ -65,7 +65,7 @@ const postMessage = function (message, fn) {
       const body = chunks.join('')
       if (fn) {
         fn({
-          body: body,
+          body,
           statusCode: res.statusCode,
           statusMessage: res.statusMessage
         })
@@ -117,7 +117,7 @@ const handleElasticBeanstalk = function (event, context) {
           { title: 'Subject', value: event.Records[0].Sns.Subject, short: false },
           { title: 'Message', value: message, short: false }
         ],
-        color: color,
+        color,
         ts: timestamp
       }
     ]
@@ -161,8 +161,8 @@ const handleCodeDeploy = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
-        fields: fields,
+        color,
+        fields,
         ts: timestamp
       }
     ]
@@ -219,8 +219,8 @@ const handleCodePipeline = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
-        fields: fields,
+        color,
+        fields,
         ts: timestamp
       }
     ]
@@ -247,7 +247,7 @@ const handleElasticache = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
+        color,
         fields: [
           { title: 'Event', value: eventname.split(':')[1], short: true },
           { title: 'Node', value: nodename, short: true },
@@ -287,7 +287,7 @@ const handleCloudWatch = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
+        color,
         fields: [
           { title: 'Alarm Name', value: alarmName, short: true },
           { title: 'Alarm Description', value: alarmReason, short: false },
@@ -326,7 +326,7 @@ const handleAutoScaling = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
+        color,
         fields: [
           { title: 'Message', value: event.Records[0].Sns.Subject, short: false },
           { title: 'Description', value: message.Description, short: false },
@@ -368,7 +368,7 @@ const handleCatchAll = function (event, context) {
     text: '*' + subject + '*',
     attachments: [
       {
-        color: color,
+        color,
         fields: [
           { title: 'Message', value: record.Sns.Subject, short: false },
           { title: 'Description', value: description, short: false }
