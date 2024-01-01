@@ -71,7 +71,7 @@
         "FunctionName": {
           "Ref": "AWS::StackName"
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Handler": "lambda.handler",
         "Timeout": 60,
         "MemorySize": 192,
