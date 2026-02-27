@@ -14,7 +14,7 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "@aws-sdk/client-kms": "3.948.0"
+    "@aws-sdk/client-kms": "3.999.0"
   },
   "devDependencies": {
     "eslint": "9.39.1",
