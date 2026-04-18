@@ -7,3 +7,10 @@ app-output_sam.json
 build
 deploy.sh
 app-sam-with-alarms.json
+
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
