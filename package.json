@@ -14,10 +14,10 @@
     "test": "npm run lint"
   },
   "dependencies": {
-    "@aws-sdk/client-kms": "3.999.0"
+    "@aws-sdk/client-kms": "3.1163.0"
   },
   "devDependencies": {
-    "eslint": "9.39.1",
+    "eslint": "9.39.5",
     "eslint-plugin-import": "2.32.0",
     "neostandard": "0.12.2"
   }
