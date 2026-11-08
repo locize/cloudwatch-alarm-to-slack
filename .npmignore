@@ -18,3 +18,4 @@ buildspec.yml
 deploy.sh
 .eslint.config.js
 updateAlarms.js
+.claude
